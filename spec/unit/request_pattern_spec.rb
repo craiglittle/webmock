@@ -146,6 +146,16 @@ describe WebMock::RequestPattern do
             should match(WebMock::RequestSignature.new(:get, "www.example.com?a[]=b&a[]=c"))
         end
 
+        it "should match request query params when the query param key is a symbol" do
+          WebMock::RequestPattern.new(:get, /.*example.*/, :query => {:param1 => '1'}).
+            should match(WebMock::RequestSignature.new(:get, "www.example.com?param1=1"))
+        end
+
+        it "should match request query params when the query param value is a number" do
+          WebMock::RequestPattern.new(:get, /.*example.*/, :query => {'param1' => 1}).
+            should match(WebMock::RequestSignature.new(:get, "www.example.com?param1=1"))
+        end
+
         it "should match request query params if params don't match" do
           WebMock::RequestPattern.new(:get, /.*example.*/, :query => {"x" => ["b", "c"]}).
             should_not match(WebMock::RequestSignature.new(:get, "www.example.com?a[]=b&a[]=c"))
@@ -180,6 +190,11 @@ describe WebMock::RequestPattern do
         it "should match when query params are the same as declared in hash" do
           WebMock::RequestPattern.new(:get, "www.example.com", :query => {"a" => ["b", "c"]}).
             should match(WebMock::RequestSignature.new(:get, "www.example.com?a[]=b&a[]=c"))
+        end
+
+        it "should match request query params when the query param value is a number" do
+          WebMock::RequestPattern.new(:get, "www.example.com", :query => {'param1' => 1}).
+            should match(WebMock::RequestSignature.new(:get, "www.example.com?param1=1"))
         end
 
         it "should not match when query params are different than the declared in hash" do
